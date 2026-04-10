@@ -1,70 +1,156 @@
-# Getting Started with Create React App
+# Metas App - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Aplicación frontend desarrollada con React para la gestión de metas personales. Permite autenticación de usuarios, administración de metas y visualización del progreso mediante una interfaz responsiva conectada a una API REST.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Descripción
 
-### `npm start`
+Esta aplicación permite a los usuarios:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+* Registrarse y autenticarse (login)
+* Crear metas personales
+* Consultar listado de metas
+* Actualizar metas
+* Eliminar metas
+* Filtrar metas por estado (pendiente, en progreso, completado)
+* Visualizar progreso de metas
+* Definir fechas de inicio y fecha límite
+* Vista de administrador para visualizar el dueño de cada meta
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## Tecnologías utilizadas
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* React.js
+* Axios
+* Bootstrap 5
+* HTML5 / CSS3
+* JavaScript
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Instalación
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 1. Clonar repositorio
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+git clone https://github.com/SaulVVelazquez/metas-app-frontend.git
+cd metas-app-frontend
 
-### `npm run eject`
+### 2. Instalar dependencias
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm install
+### 3. Configurar API
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Ubicar el archivo:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+src/services/api.js
+Configurar la URL base del backend:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```javascript
+const API_URL = "http://localhost:8000";
+### 4. Ejecutar aplicación
 
-## Learn More
+```bash
+npm start
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Acceso
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Aplicación disponible en:
+http://localhost:3000
+---
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Estructura del proyecto
 
-### Analyzing the Bundle Size
+Componentes principales:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+* `Login / Register`  
+  Manejo de autenticación de usuarios
 
-### Making a Progressive Web App
+* `MetaList`  
+  Listado de metas con filtros y visualización
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+* `MetaForm`  
+  Creación y edición de metas
 
-### Advanced Configuration
+* `App.js`  
+  Componente principal, manejo de rutas y estado global básico
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## Autenticación y Roles
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+La aplicación maneja autenticación básica utilizando `localStorage`.
 
-### `npm run build` fails to minify
+Se almacenan:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+* `user_id`
+* `rol`
+
+Estos valores se envían en cada petición HTTP mediante headers personalizados.
+
+### Tabla de permisos:
+
+| Rol   | Permisos                              |
+|-------|---------------------------------------|
+| User  | CRUD de sus propias metas             |
+| Admin | CRUD de todas las metas + ver dueño   |
+
+---
+
+## Archivo de configuración de API
+
+El archivo encargado de la comunicación con el backend es:
+
+```bash
+src/services/api.js
+
+Se utiliza Axios para las peticiones HTTP.
+
+Ejemplo de configuración:
+import axios from "axios";
+
+const API_URL = "http://localhost:8000";
+
+const api = axios.create({
+  baseURL: API_URL,
+});
+
+api.interceptors.request.use((config) => {
+  const userId = localStorage.getItem("user_id");
+  const rol = localStorage.getItem("rol");
+
+  if (userId && rol) {
+    config.headers["x-user-id"] = userId;
+    config.headers["x-rol"] = rol;
+  }
+
+  return config;
+});
+
+export default api;
+
+Características
+Interfaz responsiva con Bootstrap 5
+Uso de React Hooks (useState, useEffect)
+Comunicación asíncrona con Axios
+Manejo de estado en componentes funcionales
+Integración con API REST externa
+ Mejoras futuras
+Implementación de Context API para manejo global de estado
+Rutas privadas (Protected Routes)
+Notificaciones tipo toast para feedback al usuario
+📌 Notas
+
+Este frontend está diseñado para integrarse con la API:
+
+Metas API (FastAPI) ejecutándose en:
+http://localhost:8000
+
+Es necesario que el backend esté corriendo para el correcto funcionamiento de la aplicación
