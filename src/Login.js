@@ -1,93 +1,42 @@
-import { useState } from "react";
-import api from "./api";
+import React, { useState } from 'react';
+import api from './api';
 
-export default function Login({ onLogin, onSwitch }) {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+const Login = ({ onLogin, onSwitch }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setError("");
-        setLoading(true);
-
         try {
-            const res = await api.post("/login", { email, password });
-
-            // Guardamos toda la información necesaria en el navegador
+            const res = await api.post('/login', { email, password });
             localStorage.setItem("user_id", res.data["x-user-id"]);
             localStorage.setItem("rol", res.data["x-rol"]);
             localStorage.setItem("nombre", res.data["nombre"]);
-
-            onLogin(); // Cambia el estado en App.js para entrar a la aplicación
+            onLogin();
         } catch (err) {
-            setError(err.response?.data?.detail || "Credenciales incorrectas o error en el servidor");
-        } finally {
-            setLoading(false);
+            alert("Credenciales incorrectas");
         }
     };
 
     return (
-        <div className="vh-100 d-flex align-items-center justify-content-center bg-dark">
-            <div className="card shadow-lg p-4" style={{ width: "24rem", borderRadius: "1rem" }}>
-                <div className="text-center mb-4">
-                    <h2 className="fw-bold mt-2">Bienvenido</h2>
-                    <p className="text-muted">Ingresa a tu gestor de metas</p>
-                </div>
-
-                {error && (
-                    <div className="alert alert-danger py-2 small text-center" role="alert">
-                        {error}
-                    </div>
-                )}
-
+        <div className="container d-flex justify-content-center align-items-center vh-100">
+            <div className="card p-4 shadow-lg border-0 rounded-4" style={{ maxWidth: '400px', width: '100%' }}>
+                <h2 className="text-center fw-bold mb-4">Bienvenido</h2>
                 <form onSubmit={handleLogin}>
                     <div className="mb-3">
-                        <label className="form-label small fw-bold text-muted">Correo Electrónico</label>
-                        <input
-                            type="email"
-                            className="form-control form-control-lg"
-                            placeholder="nombre@ejemplo.com"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            required
-                        />
+                        <label className="form-label">Email</label>
+                        <input type="email" className="form-control" required value={email} onChange={e => setEmail(e.target.value)} />
                     </div>
-
                     <div className="mb-4">
-                        <label className="form-label small fw-bold text-muted">Contraseña</label>
-                        <input
-                            type="password"
-                            className="form-control form-control-lg"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            required
-                        />
+                        <label className="form-label">Contraseña</label>
+                        <input type="password" className="form-control" required value={password} onChange={e => setPassword(e.target.value)} />
                     </div>
-
-                    <button
-                        className="btn btn-primary w-100 btn-lg fw-bold mb-3 shadow-sm"
-                        type="submit"
-                        disabled={loading}
-                    >
-                        {loading ? "Cargando..." : "INICIAR SESIÓN"}
-                    </button>
-
-                    {/* ESTA ES LA OPCIÓN QUE TE FALTABA */}
-                    <div className="text-center">
-                        <span className="text-muted small">¿No tienes una cuenta? </span>
-                        <button
-                            type="button"
-                            className="btn btn-link btn-sm p-0 fw-bold text-decoration-none"
-                            onClick={onSwitch}
-                        >
-                            Regístrate aquí
-                        </button>
-                    </div>
+                    <button type="submit" className="btn btn-primary w-100 fw-bold py-2 mb-3">Ingresar</button>
+                    <button type="button" className="btn btn-link w-100 text-decoration-none" onClick={onSwitch}>¿No tienes cuenta? Regístrate</button>
                 </form>
             </div>
         </div>
     );
-}
+};
+
+export default Login;
